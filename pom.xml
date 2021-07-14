@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!-- CREATED DATE : 14/07/2021 -->
+
+    <groupId>com.manjunathprabhakar</groupId>
+    <artifactId>playwright-demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <profiles>
+        <profile>
+            <id>parallel</id>
+            <properties>
+                <runnerfile>RunTestparallel.java</runnerfile>
+            </properties>
+        </profile>
+        <profile>
+            <activation>
+                <activeByDefault>
+                    true
+                </activeByDefault>
+            </activation>
+            <id>noparallel</id>
+            <properties>
+                <runnerfile>RunTest.java</runnerfile>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <cucumber.filter.tags>@autoprac</cucumber.filter.tags>
+                        <cucumber.features>${project.basedir}/src/test/features</cucumber.features>
+                        <cucumber.glue>stepdefs</cucumber.glue>
+                        <cucumber.publish.enabled>false</cucumber.publish.enabled>
+                        <cucumber.publish.quiet>true</cucumber.publish.quiet>
+                    </systemPropertyVariables>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <includes>
+                        <include>${runnerfile}</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.manjunathprabhakar</groupId>
+                <artifactId>cooker-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>cooker-reporter-plugin</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>cook-report</goal>
+                        </goals>
+                        <configuration>
+                            <!-- MANDATORY COOKER REPORTER PROPERTIES -->
+                            <jsonPath>
+                                ${project.build.directory}\cucumber-reports
+                            </jsonPath>
+                            <!-- OPTIONAL COOKER REPORTER PROPERTIES -->
+                            <!-- htmlPath path where report will be stored, default value "${project.build.directory}\cooker-html-reports" -->
+                            <htmlPath>${project.build.directory}\cooker-reports</htmlPath>
+                            <!-- projectName default "Cooker Cucumber Automation Report" -->
+                            <projectName>Playwright-java-demo</projectName>
+                            <!-- includeScreenshots default is false, for sake of file size, disabled by default -->
+                            <includeScreenshots>true</includeScreenshots>
+                            <!-- includeOnlyScreenshotsOfFailStep default is false, for sake of file size, disabled by default -->
+                            <!-- if enabled, then screen of passed steps will be ignored in the report-->
+                            <includeOnlyScreenshotsOfFailStep>false</includeOnlyScreenshotsOfFailStep>
+                            <!-- startPage default value is "dashboard". Allowed Values "dashboard","graph","features","logs" -->
+                            <startPage>dashboard</startPage>
+                            <!-- showConsoleLogReport to display overview & fail/skip/other scenarios details, true by default -->
+                            <showConsoleLogReport>true</showConsoleLogReport>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.12.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>6.10.4</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>6.10.4</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>6.10.4</version>
+        </dependency>
+    </dependencies>
+</project>
